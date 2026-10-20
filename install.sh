@@ -120,13 +120,8 @@ exec "${HOME}/.local/bin/zip-folder" "$@"
 EOF
 chmod +x "${NAUTILUS_SCRIPT}"
 
-# Also install English alias for international users
-NAUTILUS_SCRIPT_EN="${NAUTILUS_SCRIPTS_DIR}/Compress to ZIP"
-cat << 'EOF' > "${NAUTILUS_SCRIPT_EN}"
-#!/usr/bin/env bash
-exec "${HOME}/.local/bin/zip-folder" "$@"
-EOF
-chmod +x "${NAUTILUS_SCRIPT_EN}"
+# Remove any legacy English alias to keep menu clean
+rm -f "${NAUTILUS_SCRIPTS_DIR}/Compress to ZIP"
 
 if which update-desktop-database >/dev/null 2>&1; then
     update-desktop-database "${APP_DIR}" 2>/dev/null || true
