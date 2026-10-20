@@ -9,7 +9,8 @@
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
   <img src="https://img.shields.io/badge/Python-3.8+-yellow.svg" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/Platform-Linux%20%2F%20GNOME-orange.svg" alt="Platform: Linux">
-  <img src="https://img.shields.io/badge/Compression-ZIP-success.svg" alt="ZIP">
+  <a href="https://ko-fi.com/n0ngXarm"><img src="https://img.shields.io/badge/Ko--fi-F16061?style=flat&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
+  <a href="https://buymeacoffee.com/n0ngXarm"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee"></a>
 </p>
 
 ---
@@ -79,9 +80,23 @@ cd Allzip
 
 ---
 
-## ☕ สนับสนุนผู้พัฒนา / Donation
-โปรเจกต์นี้เปิดให้ใช้งานฟรี 100% ภายใต้สัญญาอนุญาต **MIT License**  
-ติดตามผู้พัฒนาได้ที่: **GitHub:** [@n0ngXarm](https://github.com/n0ngXarm)
+## ☕ สนับสนุนผู้พัฒนา / Support & Donation
+โปรเจกต์นี้เปิดให้ทุกคนใช้งานได้ **ฟรี 100% (Open Source)** ภายใต้สัญญาอนุญาต MIT  
+หากเครื่องมือนี้ช่วยให้คุณบีบอัดไฟล์ได้สะดวกรวดเร็วขึ้น สามารถร่วมเลี้ยงกาแฟสนับสนุนผู้พัฒนาได้ผ่านช่องทางด้านล่างนี้ครับ:
+
+<p align="left">
+  <a href="https://ko-fi.com/n0ngXarm">
+    <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi" height="36">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://buymeacoffee.com/n0ngXarm">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=n0ngXarm&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" height="36" alt="Buy Me A Coffee" />
+  </a>
+</p>
+
+* **Ko-fi:** [ko-fi.com/n0ngXarm](https://ko-fi.com/n0ngXarm) *(0% fee - แนะนำ)*
+* **Buy Me a Coffee:** [buymeacoffee.com/n0ngXarm](https://buymeacoffee.com/n0ngXarm)
+* **GitHub Sponsor:** กดปุ่ม **Sponsor** 💖 ที่ด้านบนของ Repository ได้เลยครับ
 
 ---
 
