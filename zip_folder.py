@@ -64,10 +64,10 @@ def main():
         if len(success_items) == 1:
             z_path, z_size = success_items[0]
             msg = f"ไฟล์: {os.path.basename(z_path)}\nขนาด: {get_human_size(z_size)}\nตำแหน่ง: {os.path.dirname(z_path)}"
-            send_notification("📦 บีบอัดเป็น ZIP สำเร็จ!", msg)
+            send_notification("Allzip: บีบอัดสำเร็จ", msg)
         else:
             msg = f"สร้างไฟล์ ZIP สำเร็จทั้งหมด {len(success_items)} รายการ"
-            send_notification("📦 บีบอัดเป็น ZIP สำเร็จ!", msg)
+            send_notification("Allzip: บีบอัดสำเร็จ", msg)
 
     if errors:
         if shutil.which('zenity') and os.environ.get('DISPLAY'):

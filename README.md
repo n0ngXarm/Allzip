@@ -1,4 +1,4 @@
-# 📦 Allzip
+# Allzip
 
 <p align="center">
   <b>เครื่องมือบีบอัดไฟล์และโฟลเดอร์เป็น ZIP ความเร็วสูงในคลิกเดียวสำหรับ Linux (GNOME Nautilus)</b><br>
@@ -20,21 +20,21 @@
 ---
 
 <a name="ภาษาไทย"></a>
-## 🇹🇭 ภาษาไทย
+## ภาษาไทย
 
 **Allzip** เป็นเครื่องมือสำหรับบีบอัดไฟล์และโฟลเดอร์เป็นไฟล์ `.zip` อย่างรวดเร็ว ออกแบบมาให้ทำงานร่วมกับระบบปฏิบัติการ Linux ได้อย่างราบรื่น ไม่ว่าจะเป็นการคลิกขวาในตัวจัดการไฟล์ (Nautilus), การเปิดผ่านเมนูแอปพลิเคชัน, หรือการใช้งานผ่าน Command Line
 
-### 🌟 คุณสมบัติเด่น
-* **🖱️ 1-Click Compression**: คลิกขวาที่ไฟล์หรือโฟลเดอร์ใน Nautilus แล้วสั่งบีบอัดได้ทันที
-* **🛡️ ป้องกันไฟล์ซ้ำอัจฉริยะ**: หากมีไฟล์ ZIP ชื่อเดิมอยู่แล้ว ระบบจะแสดงหน้าต่างถามว่าต้องการ *"เขียนทับ"*, *"สร้างชื่อใหม่ (เช่น Folder (1).zip)"* หรือ *"ยกเลิก"*
-* **🇹🇭 รองรับชื่อไฟล์ภาษาไทย 100%**: ปลอดภัยกับชื่อโฟลเดอร์และไฟล์ภาษาไทย รวมถึงอักขระพิเศษ
-* **📊 แสดง Progress Bar อัตโนมัติ**: เมื่อบีบอัดโฟลเดอร์ขนาดใหญ่ (>25 MB หรือ >50 ไฟล์) จะมีหน้าต่างความคืบหน้าแจ้งเตือน ไม่ต้องกลัวว่าโปรแกรมจะค้าง
-* **🔔 แจ้งเตือน Desktop Notification**: เมื่อบีบอัดสำเร็จ จะมี Notification บอกขนาดไฟล์และตำแหน่งที่บันทึก
-* **⚡ ความเร็วสูงสุด**: ใช้คำสั่ง `zip` ของระบบเป็นหลัก และมีตัวสำรอง Python `zipfile` ภายในตัว
+### คุณสมบัติเด่น
+* **1-Click Compression**: คลิกขวาที่ไฟล์หรือโฟลเดอร์ใน Nautilus แล้วสั่งบีบอัดได้ทันที
+* **ป้องกันไฟล์ซ้ำอัจฉริยะ**: หากมีไฟล์ ZIP ชื่อเดิมอยู่แล้ว ระบบจะแสดงหน้าต่างถามว่าต้องการ *"เขียนทับ"*, *"สร้างชื่อใหม่ (เช่น Folder (1).zip)"* หรือ *"ยกเลิก"*
+* **รองรับชื่อไฟล์ภาษาไทย 100%**: ปลอดภัยกับชื่อโฟลเดอร์และไฟล์ภาษาไทย รวมถึงอักขระพิเศษ
+* **แสดง Progress Bar อัตโนมัติ**: เมื่อบีบอัดโฟลเดอร์ขนาดใหญ่ (>25 MB หรือ >50 ไฟล์) จะมีหน้าต่างความคืบหน้าแจ้งเตือน ไม่ต้องกังวลว่าโปรแกรมจะค้าง
+* **แจ้งเตือน Desktop Notification**: เมื่อบีบอัดสำเร็จ จะมี Notification บอกขนาดไฟล์และตำแหน่งที่บันทึก
+* **ความเร็วสูงสุด**: ใช้คำสั่ง `zip` ของระบบเป็นหลัก และมีตัวสำรอง Python `zipfile` ภายในตัว
 
 ---
 
-### 🚀 วิธีติดตั้ง (Quick Install)
+### วิธีติดตั้ง (Quick Install)
 
 เปิด Terminal แล้วคัดลอกคำสั่งไปวาง:
 
@@ -46,7 +46,7 @@ cd Allzip
 
 ---
 
-### 🖱️ วิธีใช้งาน
+### วิธีใช้งาน
 
 1. **ผ่านเมนูคลิกขวา (Nautilus):**
    * เลือกไฟล์หรือโฟลเดอร์ $\rightarrow$ คลิกขวา $\rightarrow$ **Scripts** $\rightarrow$ **Allzip**
@@ -60,18 +60,18 @@ cd Allzip
 ---
 
 <a name="english"></a>
-## 🇬🇧 English
+## English
 
 **Allzip** is a lightweight, high-performance 1-click ZIP compressor designed for Linux GNOME Nautilus desktop environments.
 
-### 🌟 Features
+### Features
 * **1-Click Context Menu**: Right-click any file or folder to compress immediately.
 * **Smart Collision Handling**: Prompts with Overwrite / New Name / Cancel if the target ZIP already exists.
 * **Unicode & UTF-8 Safe**: Full support for international characters and empty folders.
 * **Progress Indicator**: Automatic progress dialog for larger archives.
 * **Desktop Notifications**: Instant notification upon completion displaying final archive size and path.
 
-### 🚀 Installation
+### Installation
 ```bash
 git clone https://github.com/n0ngXarm/Allzip.git
 cd Allzip
@@ -80,12 +80,12 @@ cd Allzip
 
 ---
 
-## ☕ สนับสนุนผู้พัฒนา / Support & Donation
+## สนับสนุนผู้พัฒนา / Support & Donation
 โปรเจกต์นี้เปิดให้ทุกคนใช้งานได้ **ฟรี 100% (Open Source)** ภายใต้สัญญาอนุญาต MIT  
 หากเครื่องมือนี้ช่วยให้คุณบีบอัดไฟล์ได้สะดวกรวดเร็วขึ้น สามารถร่วมสนับสนุนผู้พัฒนาได้ครับ:
 
 <details>
-<summary><b>🇹🇭 สแกนผ่าน PromptPay QR (คลิกเพื่อดู QR Code)</b></summary>
+<summary><b>สแกนผ่าน PromptPay QR (คลิกเพื่อดู QR Code)</b></summary>
 <br>
 <p><i>สแกนผ่านแอปธนาคารไทยได้ทุกธนาคาร (เงินเข้าบัญชีผู้พัฒนาโดยตรง 0% ค่าธรรมเนียม):</i></p>
 <p align="left">
@@ -96,7 +96,7 @@ cd Allzip
 <br>
 
 <details>
-<summary><b>🌐 ช่องทางสำหรับชาวต่างชาติ (Ko-fi / Buy Me a Coffee)</b></summary>
+<summary><b>ช่องทางสนับสนุนสากล (Ko-fi / Buy Me a Coffee)</b></summary>
 <br>
 <p align="left">
   <a href="https://ko-fi.com/n0ngXarm">
@@ -104,17 +104,17 @@ cd Allzip
   </a>
   &nbsp;&nbsp;
   <a href="https://buymeacoffee.com/n0ngXarm">
-    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=n0ngXarm&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" height="34" alt="Buy Me A Coffee" />
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&slug=n0ngXarm&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" height="34" alt="Buy Me A Coffee" />
   </a>
 </p>
 <ul>
   <li><b>Ko-fi:</b> <a href="https://ko-fi.com/n0ngXarm">ko-fi.com/n0ngXarm</a></li>
   <li><b>Buy Me a Coffee:</b> <a href="https://buymeacoffee.com/n0ngXarm">buymeacoffee.com/n0ngXarm</a></li>
-  <li><b>GitHub Sponsor:</b> กดปุ่ม <b>Sponsor</b> 💖 ที่ด้านบนของ Repository ได้เลยครับ</li>
+  <li><b>GitHub Sponsor:</b> กดปุ่ม <b>Sponsor</b> ที่ด้านบนของ Repository ได้เลยครับ</li>
 </ul>
 </details>
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the [MIT License](LICENSE).
