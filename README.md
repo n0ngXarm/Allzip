@@ -49,7 +49,7 @@ cd Allzip
 ### 🖱️ วิธีใช้งาน
 
 1. **ผ่านเมนูคลิกขวา (Nautilus):**
-   * เลือกไฟล์หรือโฟลเดอร์ $\rightarrow$ คลิกขวา $\rightarrow$ **Scripts** $\rightarrow$ **บีบอัดเป็น ZIP** (หรือ **Compress to ZIP**)
+   * เลือกไฟล์หรือโฟลเดอร์ $\rightarrow$ คลิกขวา $\rightarrow$ **Scripts** $\rightarrow$ **Allzip**
 2. **ผ่าน Application Launcher:**
    * เปิดเมนูแอปพลิเคชันในเครื่อง ค้นหา **"Allzip"** แล้วคลิกเปิดเพื่อเลือกไฟล์
 3. **ผ่าน Terminal (CLI):**

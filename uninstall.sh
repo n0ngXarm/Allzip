@@ -6,6 +6,7 @@ echo "🗑️  กำลังถอนการติดตั้ง Allzip..."
 
 rm -f "${HOME}/.local/bin/zip-folder"
 rm -f "${HOME}/.local/share/applications/allzip.desktop"
+rm -f "${HOME}/.local/share/nautilus/scripts/Allzip"
 rm -f "${HOME}/.local/share/nautilus/scripts/บีบอัดเป็น ZIP"
 rm -f "${HOME}/.local/share/nautilus/scripts/Compress to ZIP"
 rm -rf "${HOME}/.local/share/allzip"

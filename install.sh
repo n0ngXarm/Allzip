@@ -112,15 +112,16 @@ cp -f "${SCRIPT_DIR}/allzip.desktop" "${APP_DIR}/allzip.desktop"
 
 # 4. Install Nautilus Script
 echo "🖱️  กำลังเชื่อมต่อเข้ากับเมนูคลิกขวา Nautilus..."
-NAUTILUS_SCRIPT="${NAUTILUS_SCRIPTS_DIR}/บีบอัดเป็น ZIP"
+NAUTILUS_SCRIPT="${NAUTILUS_SCRIPTS_DIR}/Allzip"
 cat << 'EOF' > "${NAUTILUS_SCRIPT}"
 #!/usr/bin/env bash
-# Nautilus script for 1-click ZIP compression
+# Nautilus script for 1-click Allzip compression
 exec "${HOME}/.local/bin/zip-folder" "$@"
 EOF
 chmod +x "${NAUTILUS_SCRIPT}"
 
-# Remove any legacy English alias to keep menu clean
+# Remove any legacy aliases to keep menu clean
+rm -f "${NAUTILUS_SCRIPTS_DIR}/บีบอัดเป็น ZIP"
 rm -f "${NAUTILUS_SCRIPTS_DIR}/Compress to ZIP"
 
 if which update-desktop-database >/dev/null 2>&1; then
@@ -131,7 +132,7 @@ echo "=========================================================="
 echo "🎉 ติดตั้ง Allzip เรียบร้อยแล้ว!"
 echo ""
 echo "🖱️  วิธีใช้งาน:"
-echo "1. ในตัวจัดการไฟล์ (Nautilus): คลิกขวาที่ไฟล์หรือโฟลเดอร์ -> Scripts -> 'บีบอัดเป็น ZIP'"
+echo "1. ในตัวจัดการไฟล์ (Nautilus): คลิกขวาที่ไฟล์หรือโฟลเดอร์ -> Scripts -> 'Allzip'"
 echo "2. ผ่านเมนูแอปพลิเคชัน: ค้นหา 'Allzip' ใน Application Menu"
 echo "3. ผ่านคำสั่ง Terminal: zip-folder <path>"
 echo "=========================================================="
