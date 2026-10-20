@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Allzip - บีบอัดเป็น ZIP
+Name[th]=Allzip - บีบอัดเป็น ZIP
+GenericName=บีบอัดไฟล์และโฟลเดอร์
+GenericName[th]=บีบอัดไฟล์และโฟลเดอร์
+Comment=กดเพื่อเลือกไฟล์/โฟลเดอร์ หรือลากไฟล์มาวางเพื่อบีบอัดเป็น ZIP ทันที
+Exec=zip-folder %F
+Icon=package-x-generic
+Terminal=false
+Categories=Utility;Archiving;
+MimeType=inode/directory;application/octet-stream;
+StartupNotify=true
+Keywords=zip;compress;folder;archive;บีบอัด;โฟลเดอร์;
