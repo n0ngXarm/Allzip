@@ -26,11 +26,13 @@
 
 ### คุณสมบัติเด่น
 * **1-Click Compression**: คลิกขวาที่ไฟล์หรือโฟลเดอร์ใน Nautilus แล้วสั่งบีบอัดได้ทันที
+* **Multi-core Turbo Speed**: ตรวจจับและใช้เอนจิน **7-Zip (`7z`)** แบบ Multi-threading อัตโนมัติ บีบอัดเร็วเต็มสปีดทุกคอร์ ไม่ทำให้เครื่องค้างแม้โฟลเดอร์ใหญ่ระดับ 10+ GB (มี fallback ไปยัง `zip` และ Python `zipfile`)
+* **ป้องกันบีบไฟล์ซ้ำอัตโนมัติ**: เมื่อเลือกหลายไฟล์พร้อมกัน ระบบจะข้ามไฟล์ที่เป็น `.zip` อยู่แล้วให้อัตโนมัติ ป้องกันการเกิดไฟล์ `.zip.zip`
+* **ข้ามไฟล์ติดสิทธิ์อย่างปลอดภัย**: จัดการไฟล์ติดสิทธิ์ (`Permission Denied`) หรือไฟล์ระบบที่ถูกล็อกได้อย่างราบรื่น ไม่ทำให้การบีบอัดทั้งหมดล้มเหลว
 * **ป้องกันไฟล์ซ้ำอัจฉริยะ**: หากมีไฟล์ ZIP ชื่อเดิมอยู่แล้ว ระบบจะแสดงหน้าต่างถามว่าต้องการ *"เขียนทับ"*, *"สร้างชื่อใหม่ (เช่น Folder (1).zip)"* หรือ *"ยกเลิก"*
+* **แสดง Progress Bar พร้อมปุ่มยกเลิก**: เมื่อบีบอัดโฟลเดอร์ขนาดใหญ่ (>25 MB หรือ >50 ไฟล์) จะมีหน้าต่างแจ้งเตือนและสามารถกดยกเลิกกลางคันได้ตลอดเวลา
 * **รองรับชื่อไฟล์ภาษาไทย 100%**: ปลอดภัยกับชื่อโฟลเดอร์และไฟล์ภาษาไทย รวมถึงอักขระพิเศษ
-* **แสดง Progress Bar อัตโนมัติ**: เมื่อบีบอัดโฟลเดอร์ขนาดใหญ่ (>25 MB หรือ >50 ไฟล์) จะมีหน้าต่างความคืบหน้าแจ้งเตือน ไม่ต้องกังวลว่าโปรแกรมจะค้าง
 * **แจ้งเตือน Desktop Notification**: เมื่อบีบอัดสำเร็จ จะมี Notification บอกขนาดไฟล์และตำแหน่งที่บันทึก
-* **ความเร็วสูงสุด**: ใช้คำสั่ง `zip` ของระบบเป็นหลัก และมีตัวสำรอง Python `zipfile` ภายในตัว
 
 ---
 
@@ -65,10 +67,13 @@ cd Allzip
 **Allzip** is a lightweight, high-performance 1-click ZIP compressor designed for Linux GNOME Nautilus desktop environments.
 
 ### Features
-* **1-Click Context Menu**: Right-click any file or folder to compress immediately.
+* **1-Click Context Menu**: Right-click any file or folder in Nautilus to compress immediately.
+* **Multi-core Turbo Speed**: Automatically leverages **7-Zip (`7z`)** multi-threading across all CPU cores for ultra-fast compression of huge archives (10+ GB) without desktop freezes, with fallback to system `zip` and pure Python `zipfile`.
+* **Smart Duplicate Archive Prevention**: Automatically skips existing `.zip` archives when multiple files are selected, preventing redundant `.zip.zip` archives.
+* **Permission & Error Resilient**: Gracefully bypasses locked or permission-denied files without failing or corrupting the archive.
 * **Smart Collision Handling**: Prompts with Overwrite / New Name / Cancel if the target ZIP already exists.
-* **Unicode & UTF-8 Safe**: Full support for international characters and empty folders.
-* **Progress Indicator**: Automatic progress dialog for larger archives.
+* **Cancellable Progress Indicator**: Shows an automatic progress dialog for larger archives with a working Cancel button.
+* **Unicode & UTF-8 Safe**: Full support for international characters (Thai, Chinese, etc.) and empty folders.
 * **Desktop Notifications**: Instant notification upon completion displaying final archive size and path.
 
 ### Installation

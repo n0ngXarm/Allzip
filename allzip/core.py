@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import time
 import zipfile
 from pathlib import Path
 
@@ -16,7 +17,7 @@ def get_dir_size_and_count(path: str) -> tuple:
     total_size = 0
     total_files = 0
     try:
-        for root, dirs, files in os.walk(path):
+        for root, dirs, files in os.walk(path, onerror=lambda e: None):
             total_files += len(files)
             for f in files:
                 fp = os.path.join(root, f)
@@ -77,32 +78,45 @@ def resolve_destination(target_path: str, auto_rename: bool = False) -> tuple:
             return candidate, False
         counter += 1
 
-def _compress_python_fallback(target: str, zip_path: str, is_dir: bool):
-    """Fallback pure-Python zipfile compression."""
-    with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
+def _compress_python_fallback(target: str, zip_path: str, is_dir: bool, progress_proc=None):
+    """Fallback pure-Python zipfile compression with Zip64 and permission resilience."""
+    with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, allowZip64=True) as zf:
         if is_dir:
             base_dir = Path(target)
-            for root, dirs, files in os.walk(target):
+            for root, dirs, files in os.walk(target, onerror=lambda e: None):
+                if progress_proc and progress_proc.poll() is not None and progress_proc.returncode != 0:
+                    raise InterruptedError("ยกเลิกโดยผู้ใช้")
                 for dir_name in dirs:
                     dir_path = Path(root) / dir_name
-                    arcname = dir_path.relative_to(base_dir.parent)
-                    zf.write(dir_path, str(arcname))
+                    try:
+                        arcname = dir_path.relative_to(base_dir.parent)
+                        zf.write(dir_path, str(arcname))
+                    except (PermissionError, OSError):
+                        continue
                 for file_name in files:
                     file_path = Path(root) / file_name
-                    arcname = file_path.relative_to(base_dir.parent)
-                    zf.write(file_path, str(arcname))
+                    try:
+                        if not file_path.is_file():
+                            continue
+                        arcname = file_path.relative_to(base_dir.parent)
+                        zf.write(file_path, str(arcname))
+                    except (PermissionError, OSError):
+                        continue
         else:
             zf.write(target, os.path.basename(target))
 
-def compress_item(target: str) -> tuple:
+def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: bool = False) -> tuple:
     target = os.path.abspath(target.rstrip('/'))
     if not os.path.exists(target):
         return False, f"ไม่พบไฟล์หรือโฟลเดอร์: {target}"
 
+    if not os.path.isdir(target) and target.lower().endswith('.zip') and skip_existing_zip:
+        return False, "เป็นไฟล์ ZIP อยู่แล้ว (ข้ามการบีบอัดซ้ำ)"
+
     parent_dir = os.path.dirname(target)
     base_name = os.path.basename(target)
 
-    zip_path, overwrite = resolve_destination(target)
+    zip_path, overwrite = resolve_destination(target, auto_rename=auto_rename)
     if not zip_path:
         return False, "ยกเลิกโดยผู้ใช้"
 
@@ -122,25 +136,70 @@ def compress_item(target: str) -> tuple:
             try:
                 progress_proc = subprocess.Popen([
                     'zenity', '--progress',
-                    '--title=กำลังบีบอัดเป็น ZIP',
-                    f'--text=กำลังบีบอัด "{base_name}" ({get_human_size(size)})...\nกรุณารอสักครู่',
+                    '--title=Allzip: กำลังบีบอัดเป็น ZIP',
+                    f'--text=กำลังบีบอัด "{base_name}" ({get_human_size(size)})...\nกรุณารอสักครู่ (กดยกเลิกได้หากต้องการหยุด)',
                     '--pulsate',
-                    '--auto-close',
-                    '--no-cancel'
+                    '--auto-close'
                 ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except Exception:
                 pass
 
     try:
-        # Prefer system 'zip' command for speed & preservation of attributes
-        if shutil.which('zip'):
-            cmd = ['zip', '-r', '-q', zip_path, base_name] if is_dir else ['zip', '-q', zip_path, base_name]
-            res = subprocess.run(cmd, cwd=parent_dir, capture_output=True, text=True)
-            if res.returncode != 0:
-                # Try python fallback on failure
-                _compress_python_fallback(target, zip_path, is_dir)
+        # Determine best available compression engine:
+        # 1. 7-Zip: Ultra-fast multi-threaded ZIP creation (-mmt=on, -mx=1)
+        # 2. System zip (Info-ZIP): Reliable standard CLI (-1)
+        # 3. Pure Python zipfile fallback
+        engine = None
+        cmd = None
+        acceptable_returncodes = (0,)
+
+        if shutil.which('7z'):
+            engine = '7z'
+            # -tzip: standard ZIP archive
+            # -mx=1: fast compression (optimal for large media/mixed workloads)
+            # -mmt=on: enable multi-threading on all available cores
+            cmd = ['7z', 'a', '-tzip', '-mx=1', '-mmt=on', zip_path, base_name]
+            # Exit code 1 indicates non-fatal warning (e.g. skipped locked/permission denied file)
+            acceptable_returncodes = (0, 1)
+        elif shutil.which('zip'):
+            engine = 'zip'
+            cmd = ['zip', '-r', '-q', '-1', zip_path, base_name] if is_dir else ['zip', '-q', '-1', zip_path, base_name]
+            # Exit code 18 for Info-ZIP indicates warning (e.g. unreadable files skipped)
+            acceptable_returncodes = (0, 18)
+
+        if cmd:
+            proc = subprocess.Popen(cmd, cwd=parent_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            while proc.poll() is None:
+                # Check if user cancelled Zenity progress dialog
+                if progress_proc and progress_proc.poll() is not None:
+                    if progress_proc.returncode != 0:
+                        # User clicked Cancel on Zenity
+                        proc.terminate()
+                        try:
+                            proc.wait(timeout=2)
+                        except subprocess.TimeoutExpired:
+                            proc.kill()
+                        if os.path.exists(zip_path):
+                            try:
+                                os.remove(zip_path)
+                            except OSError:
+                                pass
+                        return False, "ยกเลิกโดยผู้ใช้"
+                time.sleep(0.1)
+
+            if proc.returncode not in acceptable_returncodes or not os.path.exists(zip_path):
+                # Try python fallback if engine failed
+                _compress_python_fallback(target, zip_path, is_dir, progress_proc=progress_proc)
         else:
-            _compress_python_fallback(target, zip_path, is_dir)
+            _compress_python_fallback(target, zip_path, is_dir, progress_proc=progress_proc)
+
+    except InterruptedError:
+        if os.path.exists(zip_path):
+            try:
+                os.remove(zip_path)
+            except OSError:
+                pass
+        return False, "ยกเลิกโดยผู้ใช้"
     except Exception as e:
         return False, f"ข้อผิดพลาดระหว่างบีบอัด: {e}"
     finally:
@@ -150,7 +209,7 @@ def compress_item(target: str) -> tuple:
             except Exception:
                 pass
 
-    if os.path.exists(zip_path):
+    if os.path.exists(zip_path) and os.path.getsize(zip_path) > 0:
         final_size = os.path.getsize(zip_path)
         return True, (zip_path, final_size)
     else:
