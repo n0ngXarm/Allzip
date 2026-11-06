@@ -20,6 +20,21 @@ from allzip.core import compress_item, get_human_size
 from allzip.notify import send_notification
 
 def main():
+    if os.name == 'nt':
+        from allzip.windows_gui import main as windows_main
+        if '--verify-install' in sys.argv:
+            from pathlib import Path
+            import zipfile
+            folder=Path(sys.argv[sys.argv.index('--verify-install')+1])
+            source=folder/'ทดสอบ input.txt';source.write_text('verified',encoding='utf-8')
+            ok,info=compress_item(str(source),auto_rename=True)
+            if not ok:raise RuntimeError(info)
+            with zipfile.ZipFile(info[0]) as archive:
+                assert archive.read(source.name).decode('utf-8')=='verified'
+            windows_main(smoke=True)
+            (folder/'verified.txt').write_text('ok')
+        else:windows_main(sys.argv[1:],smoke='--smoke-test' in sys.argv)
+        return 0
     raw_targets = []
 
     # 1. Check Nautilus Script environment
@@ -110,4 +125,13 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception:
+        import traceback
+        from pathlib import Path
+        destination=os.environ.get('WINDOWS_APP_DIAGNOSTICS')
+        if destination:
+            Path(destination).write_text(traceback.format_exc(),encoding='utf-8')
+            sys.exit(1)
+        raise

@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import time
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -83,7 +84,8 @@ def _compress_python_fallback(target: str, zip_path: str, is_dir: bool, progress
     with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, allowZip64=True) as zf:
         if is_dir:
             base_dir = Path(target)
-            for root, dirs, files in os.walk(target, onerror=lambda e: None):
+            zf.write(base_dir, base_dir.name + "/")
+            for root, dirs, files in os.walk(target, onerror=lambda error: (_ for _ in ()).throw(error)):
                 if progress_proc and progress_proc.poll() is not None and progress_proc.returncode != 0:
                     raise InterruptedError("ยกเลิกโดยผู้ใช้")
                 for dir_name in dirs:
@@ -92,7 +94,7 @@ def _compress_python_fallback(target: str, zip_path: str, is_dir: bool, progress
                         arcname = dir_path.relative_to(base_dir.parent)
                         zf.write(dir_path, str(arcname))
                     except (PermissionError, OSError):
-                        continue
+                        raise
                 for file_name in files:
                     file_path = Path(root) / file_name
                     try:
@@ -101,12 +103,14 @@ def _compress_python_fallback(target: str, zip_path: str, is_dir: bool, progress
                         arcname = file_path.relative_to(base_dir.parent)
                         zf.write(file_path, str(arcname))
                     except (PermissionError, OSError):
-                        continue
+                        raise
         else:
             zf.write(target, os.path.basename(target))
 
 def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: bool = False) -> tuple:
-    target = os.path.abspath(target.rstrip('/'))
+    target = os.path.abspath(target)
+    if Path(target).parent == Path(target):
+        return False, 'ไม่รองรับการบีบอัดรากของไดรฟ์'
     if not os.path.exists(target):
         return False, f"ไม่พบไฟล์หรือโฟลเดอร์: {target}"
 
@@ -120,11 +124,10 @@ def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: boo
     if not zip_path:
         return False, "ยกเลิกโดยผู้ใช้"
 
-    if overwrite and os.path.exists(zip_path):
-        try:
-            os.remove(zip_path)
-        except OSError as e:
-            return False, f"ไม่สามารถลบไฟล์เดิมเพื่อเขียนทับได้: {e}"
+    destination = zip_path
+    # Build beside the input, never inside it or on top of a previous archive.
+    staging = tempfile.TemporaryDirectory(prefix='.allzip-', dir=parent_dir)
+    zip_path = str(Path(staging.name)/'archive.zip')
 
     is_dir = os.path.isdir(target)
 
@@ -153,19 +156,19 @@ def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: boo
         cmd = None
         acceptable_returncodes = (0,)
 
-        if shutil.which('7z'):
+        if os.name != 'nt' and shutil.which('7z'):
             engine = '7z'
             # -tzip: standard ZIP archive
             # -mx=1: fast compression (optimal for large media/mixed workloads)
             # -mmt=on: enable multi-threading on all available cores
-            cmd = ['7z', 'a', '-tzip', '-mx=1', '-mmt=on', zip_path, base_name]
+            cmd = ['7z', 'a', '-tzip', '-mx=1', '-mmt=on', zip_path, '--', base_name]
             # Exit code 1 indicates non-fatal warning (e.g. skipped locked/permission denied file)
-            acceptable_returncodes = (0, 1)
-        elif shutil.which('zip'):
+            acceptable_returncodes = (0,)
+        elif os.name != 'nt' and shutil.which('zip'):
             engine = 'zip'
-            cmd = ['zip', '-r', '-q', '-1', zip_path, base_name] if is_dir else ['zip', '-q', '-1', zip_path, base_name]
+            cmd = ['zip', '-r', '-q', '-1', zip_path, '--', base_name] if is_dir else ['zip', '-q', '-1', zip_path, '--', base_name]
             # Exit code 18 for Info-ZIP indicates warning (e.g. unreadable files skipped)
-            acceptable_returncodes = (0, 18)
+            acceptable_returncodes = (0,)
 
         if cmd:
             proc = subprocess.Popen(cmd, cwd=parent_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -184,6 +187,7 @@ def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: boo
                                 os.remove(zip_path)
                             except OSError:
                                 pass
+                        staging.cleanup()
                         return False, "ยกเลิกโดยผู้ใช้"
                 time.sleep(0.1)
 
@@ -199,8 +203,10 @@ def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: boo
                 os.remove(zip_path)
             except OSError:
                 pass
+        staging.cleanup()
         return False, "ยกเลิกโดยผู้ใช้"
     except Exception as e:
+        staging.cleanup()
         return False, f"ข้อผิดพลาดระหว่างบีบอัด: {e}"
     finally:
         if progress_proc and progress_proc.poll() is None:
@@ -209,8 +215,23 @@ def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: boo
             except Exception:
                 pass
 
-    if os.path.exists(zip_path) and os.path.getsize(zip_path) > 0:
-        final_size = os.path.getsize(zip_path)
-        return True, (zip_path, final_size)
-    else:
-        return False, "ไม่พบไฟล์ ZIP หลังการบีบอัด"
+    try:
+        if not os.path.exists(zip_path) or os.path.getsize(zip_path) == 0:
+            return False, 'ไม่พบไฟล์ ZIP หลังการบีบอัด'
+        with zipfile.ZipFile(zip_path) as archive:
+            if archive.testzip() is not None:
+                raise OSError('ZIP verification failed')
+        size = os.path.getsize(zip_path)
+        if overwrite:
+            os.replace(zip_path, destination)
+        else:
+            # Atomic publication without clobbering a concurrently created file.
+            if os.name == 'nt':
+                os.rename(zip_path, destination)
+            else:
+                os.link(zip_path, destination)
+        return True, (destination, size)
+    except Exception as error:
+        return False, f'ไม่สามารถบันทึก ZIP: {error}'
+    finally:
+        staging.cleanup()

@@ -1,5 +1,7 @@
 # Allzip
 
+<p align="center"><img src="assets/logo.png" width="160" alt="Allzip logo"></p>
+
 <p align="center">
   <b>เครื่องมือบีบอัดไฟล์และโฟลเดอร์เป็น ZIP ความเร็วสูงในคลิกเดียวสำหรับ Linux (GNOME Nautilus)</b><br>
   <i>Ultra-fast 1-click ZIP compressor for files and folders natively integrated into Linux desktop.</i>
@@ -26,12 +28,12 @@
 
 ### คุณสมบัติเด่น
 * **1-Click Compression**: คลิกขวาที่ไฟล์หรือโฟลเดอร์ใน Nautilus แล้วสั่งบีบอัดได้ทันที
-* **Multi-core Turbo Speed**: ตรวจจับและใช้เอนจิน **7-Zip (`7z`)** แบบ Multi-threading อัตโนมัติ บีบอัดเร็วเต็มสปีดทุกคอร์ ไม่ทำให้เครื่องค้างแม้โฟลเดอร์ใหญ่ระดับ 10+ GB (มี fallback ไปยัง `zip` และ Python `zipfile`)
+* **Multi-core Turbo Speed**: บน Linux เลือก **7-Zip (`7z`)** หรือ `zip` หากมี ส่วน Windows ใช้ Python `zipfile` ที่มากับโปรแกรม ยังไม่มีผลทดสอบโฟลเดอร์ขนาด 10+ GB
 * **ป้องกันบีบไฟล์ซ้ำอัตโนมัติ**: เมื่อเลือกหลายไฟล์พร้อมกัน ระบบจะข้ามไฟล์ที่เป็น `.zip` อยู่แล้วให้อัตโนมัติ ป้องกันการเกิดไฟล์ `.zip.zip`
-* **ข้ามไฟล์ติดสิทธิ์อย่างปลอดภัย**: จัดการไฟล์ติดสิทธิ์ (`Permission Denied`) หรือไฟล์ระบบที่ถูกล็อกได้อย่างราบรื่น ไม่ทำให้การบีบอัดทั้งหมดล้มเหลว
+* **แจ้งไฟล์ที่อ่านไม่ได้**: ถ้าอ่านไฟล์ไม่ได้จะรายงานความล้มเหลว ไม่แสดง ZIP ที่ข้อมูลไม่ครบเป็นผลสำเร็จ
 * **ป้องกันไฟล์ซ้ำอัจฉริยะ**: หากมีไฟล์ ZIP ชื่อเดิมอยู่แล้ว ระบบจะแสดงหน้าต่างถามว่าต้องการ *"เขียนทับ"*, *"สร้างชื่อใหม่ (เช่น Folder (1).zip)"* หรือ *"ยกเลิก"*
 * **แสดง Progress Bar พร้อมปุ่มยกเลิก**: เมื่อบีบอัดโฟลเดอร์ขนาดใหญ่ (>25 MB หรือ >50 ไฟล์) จะมีหน้าต่างแจ้งเตือนและสามารถกดยกเลิกกลางคันได้ตลอดเวลา
-* **รองรับชื่อไฟล์ภาษาไทย 100%**: ปลอดภัยกับชื่อโฟลเดอร์และไฟล์ภาษาไทย รวมถึงอักขระพิเศษ
+* **ทดสอบชื่อไฟล์ภาษาไทย**: ปลอดภัยกับชื่อโฟลเดอร์และไฟล์ภาษาไทย รวมถึงอักขระพิเศษ
 * **แจ้งเตือน Desktop Notification**: เมื่อบีบอัดสำเร็จ จะมี Notification บอกขนาดไฟล์และตำแหน่งที่บันทึก
 
 ---
@@ -68,12 +70,12 @@ cd Allzip
 
 ### Features
 * **1-Click Context Menu**: Right-click any file or folder in Nautilus to compress immediately.
-* **Multi-core Turbo Speed**: Automatically leverages **7-Zip (`7z`)** multi-threading across all CPU cores for ultra-fast compression of huge archives (10+ GB) without desktop freezes, with fallback to system `zip` and pure Python `zipfile`.
+* **Multi-core Turbo Speed**: On Linux, uses available **7-Zip (`7z`)** or `zip`, falling back to Python. Windows uses bundled Python zipfile in a background worker. Archives over 10 GB have not been acceptance-tested.
 * **Smart Duplicate Archive Prevention**: Automatically skips existing `.zip` archives when multiple files are selected, preventing redundant `.zip.zip` archives.
-* **Permission & Error Resilient**: Gracefully bypasses locked or permission-denied files without failing or corrupting the archive.
+* **Permission & Error Resilient**: Reports unreadable files as failures and preserves a previous archive when compression fails.
 * **Smart Collision Handling**: Prompts with Overwrite / New Name / Cancel if the target ZIP already exists.
-* **Cancellable Progress Indicator**: Shows an automatic progress dialog for larger archives with a working Cancel button.
-* **Unicode & UTF-8 Safe**: Full support for international characters (Thai, Chinese, etc.) and empty folders.
+* **Cancellable Progress Indicator**: Linux/Zenity offers a progress dialog for larger inputs; cancellation is checked between files/folders. Windows shows status and waits for compression before closing.
+* **Unicode & UTF-8 Safe**: Regression tests cover Thai filenames and empty folders; filesystem and path limits still apply.
 * **Desktop Notifications**: Instant notification upon completion displaying final archive size and path.
 
 ### Installation
@@ -123,3 +125,19 @@ cd Allzip
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
+
+## Windows 10/11 x64
+
+[ดาวน์โหลด Allzip 1.1.1 Setup.exe](https://github.com/n0ngXarm/Allzip/releases/download/v1.1.1/Allzip-1.1.1-windows-x64-setup.exe) · [ผลและไฟล์ตรวจสอบ](https://github.com/n0ngXarm/Allzip/releases/tag/v1.1.1)
+
+เปิด Setup.exe แล้วทำตามขั้นตอน ติดตั้งเฉพาะบัญชีผู้ใช้ มีทางลัด Start Menu และถอนติดตั้งผ่าน Settings → Apps ได้ ไม่ต้องลง Python หรือ Node.js เอง
+
+ตัวติดตั้งผ่าน Windows CI: ติดตั้ง เปิดโปรแกรมจากพาธภาษาไทยและช่องว่าง ติดตั้งซ้ำ ตรวจทางลัดและรายการถอนติดตั้ง แล้วถอนติดตั้งโดยคงไฟล์ตัวอย่างของผู้ใช้ไว้ อ่านรายละเอียดและข้อจำกัดใน [docs/WINDOWS_INSTALLER.md](docs/WINDOWS_INSTALLER.md) การทดสอบนี้ไม่ใช่การยืนยันบนเครื่อง Windows 10/11 ของผู้ใช้จริง
+
+ไฟล์ยัง **ไม่มีลายเซ็นดิจิทัล** จึงอาจมี SmartScreen เตือน มี checksum และรายงานการสแกนในหน้า release โปรแกรมไม่เพิ่ม firewall exceptions, antivirus exclusions, services หรือ startup tasks
+
+Windows มีหน้าต่างเลือกไฟล์/โฟลเดอร์ สร้าง ZIP ข้างต้นฉบับ และตั้งชื่อใหม่เมื่อชื่อซ้ำ งานบีบอัดทำใน background; ให้รอเสร็จก่อนปิด โปรแกรมตรวจ ZIP ก่อนเผยแพร่และเก็บ ZIP เก่าไว้หากสร้างไฟล์ใหม่ล้มเหลว
+
+## Agent instructions
+
+Read [AGENTS.md](AGENTS.md), PROJECT_PROGRESS.md and the project skill under `.agents/skills/` before maintenance. These are repository-local instructions; no global installation is needed.
