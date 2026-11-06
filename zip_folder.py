@@ -125,4 +125,13 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception:
+        import traceback
+        from pathlib import Path
+        destination=os.environ.get('WINDOWS_APP_DIAGNOSTICS')
+        if destination:
+            Path(destination).write_text(traceback.format_exc(),encoding='utf-8')
+            sys.exit(1)
+        raise

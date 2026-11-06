@@ -226,7 +226,10 @@ def compress_item(target: str, auto_rename: bool = False, skip_existing_zip: boo
             os.replace(zip_path, destination)
         else:
             # Atomic publication without clobbering a concurrently created file.
-            os.link(zip_path, destination)
+            if os.name == 'nt':
+                os.rename(zip_path, destination)
+            else:
+                os.link(zip_path, destination)
         return True, (destination, size)
     except Exception as error:
         return False, f'ไม่สามารถบันทึก ZIP: {error}'
