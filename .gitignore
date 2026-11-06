@@ -3,3 +3,5 @@ __pycache__/
 *$py.class
 *.zip
 .DS_Store
+
+/packaging/version_info.txt
