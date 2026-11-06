@@ -113,3 +113,31 @@ class ArchiveSafetyTests(unittest.TestCase):
             _compress_python_fallback(str(source), str(dest), True)
             with zipfile.ZipFile(dest) as archive:
                 self.assertIn('empty/', archive.namelist())
+
+    def test_publication_race_does_not_overwrite_new_destination(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as folder:
+            source=Path(folder)/'input.txt';source.write_text('new')
+            dest=Path(str(source)+'.zip')
+            def raced(*args, **kwargs):
+                dest.write_bytes(b'OTHER WRITER')
+                return _compress_python_fallback(*args, **kwargs)
+            with patch('allzip.core.shutil.which',return_value=None),patch('allzip.core._compress_python_fallback',side_effect=raced):
+                ok,_=compress_item(str(source))
+            self.assertFalse(ok)
+            self.assertEqual(dest.read_bytes(),b'OTHER WRITER')
+            self.assertFalse(list(Path(folder).glob('.allzip-*')))
+
+    def test_unreadable_input_is_failure_not_partial_success(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as folder:
+            source=Path(folder)/'folder';source.mkdir();(source/'locked.txt').write_text('keep')
+            original=zipfile.ZipFile.write
+            def fail_file(archive,path,*args,**kwargs):
+                if Path(path).is_file():raise PermissionError('locked')
+                return original(archive,path,*args,**kwargs)
+            with patch('allzip.core.shutil.which',return_value=None),patch.object(zipfile.ZipFile,'write',fail_file):
+                ok,_=compress_item(str(source))
+            self.assertFalse(ok)
+            self.assertFalse(Path(str(source)+'.zip').exists())
+            self.assertFalse(list(Path(folder).glob('.allzip-*')))
